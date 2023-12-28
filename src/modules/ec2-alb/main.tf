@@ -61,7 +61,7 @@ resource "aws_lb" "my_alb" {
   internal           = false
   load_balancer_type = "application"
   subnets            = var.subnet_ids
-  security_groups    = [
+  security_groups = [
     aws_security_group.my_security_group.id
   ]
 
