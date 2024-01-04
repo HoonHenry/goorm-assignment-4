@@ -1,28 +1,41 @@
+terraform {
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = ">= 5.0.0"
+    }
+  }
+}
+
+provider "aws" {}
+
 module "vpc" {
-  source   = "./modules/vpc"
-  region   = "ap-northeast-2"
-  vpc_cidr = "10.0.0.0/16"
-  subnet_cidrs = [
-    "10.0.64.0/20", "10.0.80.0/24",
-    "10.0.96.0/24", "10.0.112.0/24"
-  ]
-  az_list = [
-    "ap-northeast-2a",
-    "ap-northeast-2b",
-    "ap-northeast-2c",
-    "ap-northeast-2d"
-  ]
+  source = "./modules/vpc"
 }
 
-module "ec2_alb" {
-  source        = "./modules/ec2-alb"
-  ami           = "ami-09eb4311cbaecf89d" # Replace with the correct AMI ID
-  instance_type = "t2.micro"
-  subnet_ids    = module.vpc.subnet_ids
-  vpc_id        = module.vpc.vpc_id
-  vpc_name      = module.vpc.vpc_name
+module "security_group" {
+  source      = "./modules/security_group"
+  vpc_id      = module.vpc.vpc_id
+  name_prefix = module.vpc.vpc_name
 }
 
-provider "aws" {
-  region = "ap-northeast-2"
+module "target_group" {
+  source  = "./modules/target_group"
+  tg_name = var.project_name
+  vpc_id  = module.vpc.vpc_id
+}
+
+module "loadbalancer" {
+  source         = "./modules/loadbalancer"
+  app_subnet_ids = module.vpc.app_subnet_ids
+  web_subnet_ids = module.vpc.web_subnet_ids
+  vpc_id         = module.vpc.vpc_id
+  app_sg_ids = [
+    module.security_group.app_sg_id
+  ]
+  web_sg_ids = [
+    module.security_group.web_sg_id
+  ]
+  app_tg_arn = module.target_group.app_tg_arn
+  web_tg_arn = module.target_group.web_tg_arn
 }

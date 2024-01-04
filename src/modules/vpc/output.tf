@@ -6,6 +6,14 @@ output "vpc_name" {
   value = aws_vpc.my_vpc.tags["Name"]
 }
 
-output "subnet_ids" {
-  value = aws_subnet.my_subnets.*.id
+output "web_subnet_ids" {
+  value = aws_subnet.public_web.*.id
 }
+
+output "app_subnet_ids" {
+  value = aws_subnet.private_app.*.id
+}
+
+# output "db_subnet_ids" {
+#   value = aws_subnet.my_subnets.*.id
+# }
