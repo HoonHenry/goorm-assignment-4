@@ -39,3 +39,22 @@ module "loadbalancer" {
   app_tg_arn = module.target_group.app_tg_arn
   web_tg_arn = module.target_group.web_tg_arn
 }
+
+module "autoscaling_group" {
+  source         = "./modules/autoscaling_group"
+  app_subnet_ids = module.vpc.app_subnet_ids
+  web_subnet_ids = module.vpc.web_subnet_ids
+  app_tg_arn     = module.target_group.app_tg_arn
+  web_tg_arn     = module.target_group.web_tg_arn
+  sg_ids = [
+    module.security_group.web_sg_id
+  ]
+}
+
+module "rds" {
+  source = "./modules/rds"
+  rds_sg_ids = [
+    module.security_group.db_sg_id
+  ]
+  rds_subnet_group_id = module.vpc.rds_subnet_group_id
+}

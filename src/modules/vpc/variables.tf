@@ -28,8 +28,8 @@ variable "private_subnet_cidrs" {
   default     = ["10.0.32.0/20", "10.0.48.0/20"]
 }
 
-# variable "db_subnet_cidrs" {
-#   description = "List of private CIDR blocks for the private db"
-#   type        = list(string)
-#   default     = ["10.0.64.0/20", "10.0.80.0/20"]
-# }
+variable "db_subnet_cidrs" {
+  description = "List of private CIDR blocks for the private db"
+  type        = list(string)
+  default     = ["10.0.64.0/20", "10.0.80.0/20"]
+}

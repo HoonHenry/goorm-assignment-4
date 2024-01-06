@@ -1,3 +1,8 @@
+variable "sg_ids" {
+  description = "The ID list for the autoscaling group"
+  type        = list(string)
+}
+
 variable "ami" {
   description = "The AMI to use for the EC2 instance"
   type        = string
@@ -10,20 +15,10 @@ variable "instance_type" {
   default     = "t2.micro"
 }
 
-variable "asg_name" {
-  description = "The name of autoscaling group"
-  type        = string
-}
-
-variable "subnet_ids" {
-  description = "The IDs of the subnets to place the EC2 instance in"
-  type        = list(string)
-}
-
-variable "vpc_id" {
-  description = "The ID of the VPC"
-  type        = string
-}
+# variable "vpc_id" {
+#   description = "The ID of the VPC"
+#   type        = string
+# }
 
 variable "min_size" {
   description = "the minimum size of the instance for the autoscaling group"
@@ -41,4 +36,24 @@ variable "desired_capacity" {
   description = "the desired number of the instance for the autoscaling group"
   type        = number
   default     = 2
+}
+
+variable "app_subnet_ids" {
+  description = "The IDs list for app"
+  type        = list(string)
+}
+
+variable "web_subnet_ids" {
+  description = "The IDs list for web"
+  type        = list(string)
+}
+
+variable "app_tg_arn" {
+  description = "The ID of the app target group"
+  type        = string
+}
+
+variable "web_tg_arn" {
+  description = "The ID of the web target group"
+  type        = string
 }
