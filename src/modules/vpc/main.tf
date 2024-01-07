@@ -42,6 +42,10 @@ resource "aws_route_table" "public_rtb" {
     cidr_block = "0.0.0.0/0"
     gateway_id = aws_internet_gateway.my_igw.id
   }
+
+  tags = {
+    Name = "Web Route Table"
+  }
 }
 
 resource "aws_route_table_association" "public_rtba" {
@@ -51,21 +55,19 @@ resource "aws_route_table_association" "public_rtba" {
 }
 
 resource "aws_eip" "nat" {
-  # count  = length(aws_subnet.public_web)
+  count  = length(aws_subnet.public_web)
   domain = "vpc"
 }
 
 resource "aws_nat_gateway" "public_nat" {
-  # count         = length(aws_subnet.public_web)
-  # allocation_id = aws_eip.nat[count.index].id
-  # subnet_id     = aws_subnet.public_web[count.index].id
-  allocation_id = aws_eip.nat.id
-  subnet_id     = aws_subnet.public_web[0].id
+  count         = length(aws_subnet.public_web)
+  allocation_id = aws_eip.nat[count.index].id
+  subnet_id     = aws_subnet.public_web[count.index].id
 
   depends_on = [aws_internet_gateway.my_igw]
 
   tags = {
-    Name = "goormVPC-nat"
+    Name = "goormVPC-nat-${var.vpc_az_list[count.index]}"
   }
 }
 
@@ -88,9 +90,8 @@ resource "aws_route_table" "private_rtb" {
     gateway_id = "local"
   }
 
-  route {
-    cidr_block     = "0.0.0.0/0"
-    nat_gateway_id = aws_nat_gateway.public_nat.id
+  tags = {
+    Name = "App Route Table"
   }
 }
 
@@ -108,12 +109,17 @@ resource "aws_subnet" "db_subnet" {
   cidr_block        = var.db_subnet_cidrs[count.index]
 
   tags = {
-    Name = "Private subnet for DB in ${var.vpc_region}${var.vpc_az_list[count.index]}"
+    Name        = "Private DB ${var.vpc_az_list[count.index]}"
+    Description = "Private subnet for DB in ${var.vpc_region}${var.vpc_az_list[count.index]}"
   }
 }
 
 resource "aws_route_table" "db_rtb" {
   vpc_id = aws_vpc.my_vpc.id
+
+  tags = {
+    Name = "DB Route Table"
+  }
 }
 
 resource "aws_route_table_association" "db_rtba" {

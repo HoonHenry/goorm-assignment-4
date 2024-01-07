@@ -15,11 +15,6 @@ variable "instance_type" {
   default     = "t2.micro"
 }
 
-# variable "vpc_id" {
-#   description = "The ID of the VPC"
-#   type        = string
-# }
-
 variable "min_size" {
   description = "the minimum size of the instance for the autoscaling group"
   type        = number
