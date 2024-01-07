@@ -22,6 +22,7 @@ resource "aws_db_instance" "master" {
   apply_immediately          = true
   publicly_accessible        = false
   auto_minor_version_upgrade = true
+  multi_az                   = true
   vpc_security_group_ids     = var.rds_sg_ids
   db_subnet_group_name       = var.rds_subnet_group_id
 }

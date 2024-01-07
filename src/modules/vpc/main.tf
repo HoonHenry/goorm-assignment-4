@@ -90,15 +90,22 @@ resource "aws_route_table" "private_rtb" {
     gateway_id = "local"
   }
 
+  count = length(aws_nat_gateway.public_nat)
+  route {
+    cidr_block     = "0.0.0.0/0"
+    nat_gateway_id = aws_nat_gateway.public_nat[count.index].id
+  }
+
   tags = {
-    Name = "App Route Table"
+    Name = "App Route Table ${var.vpc_az_list[count.index]}"
   }
 }
 
 resource "aws_route_table_association" "private_rtba" {
-  count          = length(aws_subnet.private_app)
-  subnet_id      = aws_subnet.private_app[count.index].id
-  route_table_id = aws_route_table.private_rtb.id
+  count     = length(aws_subnet.private_app)
+  subnet_id = aws_subnet.private_app[count.index].id
+  # route_table_id = aws_route_table.private_rtb.id
+  route_table_id = aws_route_table.private_rtb[count.index].id
 }
 
 resource "aws_subnet" "db_subnet" {
