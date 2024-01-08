@@ -22,9 +22,10 @@ resource "aws_db_instance" "master" {
   apply_immediately          = true
   publicly_accessible        = false
   auto_minor_version_upgrade = true
-  multi_az                   = true
+  # multi_az                   = true
+  availability_zone          = var.master_az_name
   vpc_security_group_ids     = var.rds_sg_ids
-  db_subnet_group_name       = var.rds_subnet_group_id
+  db_subnet_group_name       = var.rds_subnet_group_name
 }
 
 resource "aws_db_instance" "read_replica" {
@@ -34,8 +35,8 @@ resource "aws_db_instance" "read_replica" {
   deletion_protection        = false
   apply_immediately          = true
   publicly_accessible        = false
+  skip_final_snapshot        = true
   auto_minor_version_upgrade = true
   vpc_security_group_ids     = var.rds_sg_ids
+  availability_zone          = var.replica_az_name
 }
-
-

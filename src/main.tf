@@ -46,7 +46,10 @@ module "autoscaling_group" {
   web_subnet_ids = module.vpc.web_subnet_ids
   app_tg_arn     = module.target_group.app_tg_arn
   web_tg_arn     = module.target_group.web_tg_arn
-  sg_ids = [
+  app_sg_ids = [
+    module.security_group.app_sg_id
+  ]
+  web_sg_ids = [
     module.security_group.web_sg_id
   ]
 }
@@ -56,5 +59,5 @@ module "rds" {
   rds_sg_ids = [
     module.security_group.db_sg_id
   ]
-  rds_subnet_group_id = module.vpc.rds_subnet_group_id
+  rds_subnet_group_name = module.vpc.rds_subnet_group_name
 }

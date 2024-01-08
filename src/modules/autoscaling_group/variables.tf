@@ -1,5 +1,10 @@
-variable "sg_ids" {
-  description = "The ID list for the autoscaling group"
+variable "app_sg_ids" {
+  description = "The ID list for the app autoscaling group"
+  type        = list(string)
+}
+
+variable "web_sg_ids" {
+  description = "The ID list for the web autoscaling group"
   type        = list(string)
 }
 
